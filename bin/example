@@ -1,10 +1,27 @@
 #!/usr/bin/env node
 
 require('ttycolor')().defaults();
-process.env.NODE_ENV = 'test';
-var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
-//console.log(env.nodeEnv);
-for(var z in env) {
+
+//var env = require('..')({prefix: 'pkg'});
+//env.set('directory', '/usr/local/packages');
+//console.log(env.directory);
+//console.log(env.get('directory'));
+//console.log(process.env.pkg_directory);
+
+//var env = require('..')({prefix: false, initialize: true});
+//for(var z in env) {
   //console.log(z + '=%s', env[z]);             // => camelcase keys
+//}
+
+var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
+for(var z in env) {
   console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
 }
+
+//process.env.NODE_ENV = 'test';
+//var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
+////console.log(env.nodeEnv);
+//for(var z in env) {
+  ////console.log(z + '=%s', env[z]);             // => camelcase keys
+  //console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
+//}
