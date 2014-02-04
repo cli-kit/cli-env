@@ -30,19 +30,11 @@ var Environment = function(conf) {
       enumerable: false,
       configurable: false,
       writable: false,
-      value: conf
+      value: conf || {}
     }
   );
-  if(conf.initialize) {
-    for(var z in process.env) {
-      if(conf.match instanceof RegExp) {
-        if(conf.match.test(z)) {
-          this.set(z.toLowerCase(), process.env[z]);
-        }
-      }else{
-        this.set(z.toLowerCase(), process.env[z]);
-      }
-    }
+  if(this.conf.initialize) {
+    this.load();
   }
 }
 
@@ -57,8 +49,10 @@ var Environment = function(conf) {
  *  @return A converted key.
  */
 function getKey(key) {
-  if(typeof(this.conf.transform.key) == 'function') {
-    return this.conf.transform.key.call(this, key);
+  if(this.conf.transform) {
+    if(typeof(this.conf.transform.key) == 'function') {
+      return this.conf.transform.key.call(this, key);
+    }
   }
   key = delimited(key, this.conf.delimiter);
   key = key.replace(/- /, this.conf.delimiter);
@@ -82,8 +76,10 @@ function getKey(key) {
  *  @return The value of the environment variable.
  */
 function getValue (key, name, raw) {
-  if(typeof(this.conf.transform.value) == 'function') {
-    return this.conf.transform.value.call(this, key, name, raw);
+  if(this.conf.transform) {
+    if(typeof(this.conf.transform.value) == 'function') {
+      return this.conf.transform.value.call(this, key, name, raw);
+    }
   }
   var value = process.env[raw] || this[name];
   if(this.conf.native && typeof(value) == 'string') {
@@ -102,8 +98,10 @@ function getValue (key, name, raw) {
  */
 function getPropertyName(key) {
   if(key == '_') return key;
-  if(typeof(this.conf.transform.name) == 'function') {
-    return this.conf.transform.name.call(this, key);
+  if(this.conf.transform) {
+    if(typeof(this.conf.transform.name) == 'function') {
+      return this.conf.transform.name.call(this, key);
+    }
   }
   if(this.conf.prefix) {
     key = key.replace(this.conf.prefix + '_', '');
@@ -145,12 +143,33 @@ function get(key) {
   return value;
 }
 
+/**
+ *  Load variables from the environment into this
+ *  instance.
+ *
+ *  @param match A regular expression test determining
+ *  which variables to load.
+ */
+function load(match) {
+  match = match || this.conf.match;
+  for(var z in process.env) {
+    if(match instanceof RegExp) {
+      if(match.test(z)) {
+        this.set(z.toLowerCase(), process.env[z]);
+      }
+    }else{
+      this.set(z.toLowerCase(), process.env[z]);
+    }
+  }
+}
+
 var methods = {
   getKey: getKey,
   getValue: getValue,
   getPropertyName: getPropertyName,
   get: get,
-  set: set
+  set: set,
+  load: load
 }
 
 for(var z in methods) {

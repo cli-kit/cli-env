@@ -99,15 +99,51 @@ console.log(JSON.stringify(env, undefined, 2));
 * `delimiter`: The string delimiter for environment variable names.
 * `initialize`: A boolean indicating whether the instance should import the environment variables at instantiation.
 * `match`: A regular expression used to filter the environment variables to import.
-* `transform`: An object containing functions that may be used to override the default logic for determining variable keys, retrieving variable values and getting property names.
+* `transform`: An object containing functions that may be used to override the default logic for determining variable keys, retrieving variable values and getting property names. All functions are invoked in the scope of the `Environment` instance.
+* `native`: If present this object indicates that type conversion should be done from string values to native types.
 
 ### transform.key(key)
 
-When the `set` and `get` methods are called this function if defined will be invoked in the scope of the `Environment`.
+When the `set` and `get` methods are called this function if defined will be invoked.
 
 It is parsed the raw key value and should return a mutated key suitable for setting an environment variable.
 
-### transform.value(key)
+### transform.value(key, name, raw)
+
+If defined this method is invoked from `get` and passed the mutated key (returned by `transform.key()`), the property name (returned by `transform.name()`) and the raw value passed to `get`, it should return the value for the property.
+
+### transform.name(key)
+
+Determines the property name for a variable on the `Environment` instance. This method is passed the raw key from `set` or `get` and should return the name of the property.
+
+### native.delimiter
+
+The string (or regular expression) delimiter to use when converting strings to arrays.
+
+### native.json
+
+A boolean indicating that type conversion should also be done for strings that appear to be JSON. Use this with caution.
+
+## Module
+
+### env([conf])
+
+Create a new `Environment` instance merging the `conf` parameter with the default configuration.
+
+## Environment
+
+### get(key)
+
+Get the value of a variable.
+
+* `key`: The name of the variable.
+
+### set(key, value)
+
+Set the value of a variable.
+
+* `key`: The name of the variable.
+* `value`: The value for the variable.
 
 ## License
 
