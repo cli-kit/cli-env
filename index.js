@@ -1,6 +1,7 @@
 var basename = require('path').basename;
 var merge = require('cli-util').merge;
 var camelcase = require('cli-util').camelcase;
+var delimited = require('cli-util').delimited;
 
 var defaults = {
   prefix: basename(process.argv[1]),
@@ -43,6 +44,7 @@ function getKey(key) {
   if(typeof(this.conf.transform.key) == 'function') {
     return this.conf.transform.key.call(this, key);
   }
+  key = delimited(key, this.conf.delimiter);
   key = key.replace(/- /, this.conf.delimiter);
   key = key.replace(/[^a-zA-Z0-9_]/, '');
   return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
@@ -80,7 +82,6 @@ function getPropertyName(key) {
   return camelcase(key, this.conf.delimiter)
 }
 
-
 /**
  *  Set an environment variable using the transform
  *  set function.
@@ -108,12 +109,36 @@ function get(key) {
   return value || process.env[key] || this[this.getPropertyName(key)];
 }
 
+
+/**
+ *  Convert the environment variables to a string
+ *  representation suitable for an rc file.
+ *
+ *  @param exports Whether to include the exports prefix.
+ */
+function toExports(exports) {
+  var str ='';
+  var z, k, v, s;
+  for(z in this) {
+    // TODO: convert from property name (camelcase) tp underscore delimited
+    k = this.getKey(z);
+    v = this[z];
+    s = k + '=\'' + v + '\';';
+    if(exports) {
+      s = 'export ' + s;
+    }
+    str += s + '\n';
+  }
+  return str.trim();
+}
+
 var methods = {
   getKey: getKey,
   getValue: getValue,
   getPropertyName: getPropertyName,
   get: get,
-  set: set
+  set: set,
+  toExports: toExports
 }
 
 for(var z in methods) {

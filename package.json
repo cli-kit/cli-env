@@ -1,6 +1,6 @@
 {
   "name": "cli-env",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Environment variable management",
   "author": "muji <noop@xpm.io>",
   "repository": {
@@ -20,7 +20,7 @@
     "environment"
   ],
   "dependencies": {
-    "cli-util": "~1.0.8"
+    "cli-util": "~1.0.9"
   },
   "devDependencies": {
     "mocha": "~1.17.0",
