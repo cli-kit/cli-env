@@ -14,7 +14,8 @@ var defaults = {
     key: null,
     value: null,
     name: null
-  }
+  },
+  native: null
 }
 
 /**
@@ -76,14 +77,20 @@ function getKey(key) {
  *  @param key The key that has already been passed through
  *  the key transformation function.
  *  @param property The name of a property corresponding to the key.
+ *  @param raw The raw untouched key.
  *
  *  @return The value of the environment variable.
  */
-function getValue (key, property) {
+function getValue (key, name, raw) {
   if(typeof(this.conf.transform.value) == 'function') {
-    return this.conf.transform.value.call(this, key);
+    return this.conf.transform.value.call(this, key, name, raw);
   }
-  return process.env[key] || this[property];
+  var value = process.env[raw] || this[name];
+  if(this.conf.native && typeof(value) == 'string') {
+    value = native.to(
+      value, this.conf.native.delimiter, this.conf.native.json);
+  }
+  return value;
 }
 
 /**
@@ -133,12 +140,8 @@ function set(key, value) {
  */
 function get(key) {
   var k = this.getKey(key);
-  var value = this.getValue(k);
-  value = value || process.env[key] || this[this.getPropertyName(key)];
-  if(this.conf.native && typeof(value) == 'string') {
-    value = native.to(
-      value, this.conf.native.delimiter, this.conf.native.json);
-  }
+  var name = this.getPropertyName(key);
+  var value = this.getValue(k, name, key);
   return value;
 }
 

@@ -2,6 +2,8 @@
 
 Environment variable management.
 
+This module is designed for command line interfaces that wish to access a set of prefixed environment variables to indicate preferences or default values for common arguments, however, it is quite flexible and could be used for a variety of purposes.
+
 ## Install
 
 ```
@@ -75,6 +77,37 @@ console.log(JSON.stringify(env, undefined, 2));
   "str": "value"
 }
 ```
+
+## Configuration
+
+```javascript
+{
+  prefix: basename(process.argv[1]),
+  delimiter: '_',
+  initialize: false,
+  match: null,
+  transform: {
+    key: null,
+    value: null,
+    name: null
+  },
+  native: null
+}
+```
+
+* `prefix`: The string prefix for environment variables.
+* `delimiter`: The string delimiter for environment variable names.
+* `initialize`: A boolean indicating whether the instance should import the environment variables at instantiation.
+* `match`: A regular expression used to filter the environment variables to import.
+* `transform`: An object containing functions that may be used to override the default logic for determining variable keys, retrieving variable values and getting property names.
+
+### transform.key(key)
+
+When the `set` and `get` methods are called this function if defined will be invoked in the scope of the `Environment`.
+
+It is parsed the raw key value and should return a mutated key suitable for setting an environment variable.
+
+### transform.value(key)
 
 ## License
 
