@@ -16,6 +16,15 @@ npm install cli-env
 npm test
 ```
 
+## Features
+
+* Convenient access to environment variables
+* Enumeration safe implementation
+* Loading environment variable subsets
+* JSON safe data structure
+* Native type coercion support
+* 100% code coverage
+
 ## Examples
 
 Manage a set of prefixed variables:
