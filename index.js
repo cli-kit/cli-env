@@ -54,7 +54,10 @@ function getKey(key) {
   key = delimited(key, this.conf.delimiter);
   key = key.replace(/- /, this.conf.delimiter);
   key = key.replace(/[^a-zA-Z0-9_]/, '');
-  return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
+  if(this.conf.prefix) {
+    return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
+  }
+  return key.toLowerCase();
 }
 
 /**

@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+require('ttycolor')().defaults();
+process.env.NODE_ENV = 'test';
+var env = require('..')({prefix: false, initialize: true});
+//env.get('NODE_ENV');
+//console.log(env.nodeEnv);
+//env.set('highlight_syntax', true);
+//console.log(env.highlightSyntax);
+//console.dir(env);
+for(var z in env) {
+  //console.log(z + '=%s', env[z]);             // => camelcase keys
+  console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
+}
