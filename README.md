@@ -38,9 +38,41 @@ for(var z in env) {
 Import a subset of environment variables matching a regular expression:
 
 ```javascript
-var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
+var env = require('..')({
+  prefix: false, initialize: true, match: /^lc_/i});
 for(var z in env) {
   console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
+}
+```
+
+Native type coercion:
+
+```javascript
+process.env.type_tbool = 'true';
+process.env.type_fbool = 'false';
+process.env.type_null = 'null';
+process.env.type_num = '3.14';
+process.env.type_nums = '1,2,3';
+process.env.type_str = 'value';
+var env = require('..')({
+  prefix: 'type', initialize: true, match: /^type_/i,
+  native: {delimiter: ','}
+});
+console.log(JSON.stringify(env, undefined, 2));
+```
+
+```json
+{
+  "tbool": true,
+  "fbool": false,
+  "null": null,
+  "num": 3.14,
+  "nums": [
+    1,
+    2,
+    3
+  ],
+  "str": "value"
 }
 ```
 

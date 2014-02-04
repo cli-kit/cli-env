@@ -13,15 +13,20 @@ require('ttycolor')().defaults();
   //console.log(z + '=%s', env[z]);             // => camelcase keys
 //}
 
-var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
-for(var z in env) {
-  console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
-}
-
-//process.env.NODE_ENV = 'test';
-//var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
-////console.log(env.nodeEnv);
+//var env = require('..')({
+  //prefix: false, initialize: true, match: /^lc_/i});
 //for(var z in env) {
-  ////console.log(z + '=%s', env[z]);             // => camelcase keys
   //console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
 //}
+
+process.env.type_tbool = 'true';
+process.env.type_fbool = 'false';
+process.env.type_null = 'null';
+process.env.type_num = '3.14';
+process.env.type_nums = '1,2,3';
+process.env.type_str = 'value';
+var env = require('..')({
+  prefix: 'type', initialize: true, match: /^type_/i,
+  native: {delimiter: ','}
+});
+console.log(JSON.stringify(env, undefined, 2));

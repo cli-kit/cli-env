@@ -98,6 +98,9 @@ function getPropertyName(key) {
   if(typeof(this.conf.transform.name) == 'function') {
     return this.conf.transform.name.call(this, key);
   }
+  if(this.conf.prefix) {
+    key = key.replace(this.conf.prefix + '_', '');
+  }
   return camelcase(key, this.conf.delimiter)
 }
 
