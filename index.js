@@ -7,6 +7,7 @@ var defaults = {
   prefix: basename(process.argv[1]),
   delimiter: '_',
   initialize: false,
+  match: null,
   transform: {
     key: null,
     value: null,
@@ -32,7 +33,13 @@ var Environment = function(conf) {
   if(conf.initialize) {
     for(var z in process.env) {
       //console.log('%s=%s', z, process.env[z]);
-      this.set(z.toLowerCase(), process.env[z] || '');
+      if(conf.match instanceof RegExp) {
+        if(conf.match.test(z)) {
+          this.set(z.toLowerCase(), process.env[z] || '');
+        }
+      }else{
+        this.set(z.toLowerCase(), process.env[z] || '');
+      }
     }
   }
 }

@@ -14,14 +14,26 @@ npm install cli-env
 npm test
 ```
 
-## API
+## Examples
+
+Import all environment variables:
 
 ```javascript
-process.env.NODE_ENV = 'test';
-var env = require('cli-env')({prefix: 'program'});
-env.get('NODE_ENV');                            // => test
-env.set('highlight-syntax', true);
-console.log(env.highlightSyntax);               // => true
+var env = require('..')({prefix: false, initialize: true);
+for(var z in env) {
+  //console.log(z + '=%s', env[z]);             // => camelcase keys
+  console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
+}
+```
+
+Import a subset of environment variables matching a regular expression:
+
+```javascript
+var env = require('..')({prefix: false, initialize: true, match: /^lc/i});
+for(var z in env) {
+  //console.log(z + '=%s', env[z]);             // => camelcase keys
+  console.log(env.getKey(z) + '=%s', env[z]);   // => lowercase+underscore
+}
 ```
 
 ## License
