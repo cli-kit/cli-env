@@ -19,6 +19,9 @@
     "env",
     "environment"
   ],
+  "dependencies": {
+    "cli-util": "~1.0.8"
+  },
   "devDependencies": {
     "mocha": "~1.17.0",
     "chai": "~1.8.1",
