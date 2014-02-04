@@ -126,35 +126,12 @@ function get(key) {
   return value || process.env[key] || this[this.getPropertyName(key)];
 }
 
-/**
- *  Convert the environment variables to a string
- *  representation suitable for an rc file.
- *
- *  @param exports Whether to include the exports prefix.
- */
-function toExports(exports) {
-  var str ='';
-  var z, k, v, s;
-  for(z in this) {
-    // TODO: convert from property name (camelcase) tp underscore delimited
-    k = this.getKey(z);
-    v = this[z];
-    s = k + '=\'' + v + '\';';
-    if(exports) {
-      s = 'export ' + s;
-    }
-    str += s + '\n';
-  }
-  return str.trim();
-}
-
 var methods = {
   getKey: getKey,
   getValue: getValue,
   getPropertyName: getPropertyName,
   get: get,
-  set: set,
-  toExports: toExports
+  set: set
 }
 
 for(var z in methods) {
