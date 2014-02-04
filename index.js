@@ -1,9 +1,9 @@
 var basename = require('path').basename;
 var merge = require('cli-util').merge;
+var native = require('cli-native');
 var utils = require('cli-util');
 var camelcase = utils.camelcase;
 var delimited = utils.delimited;
-var native = utils.native;
 
 var defaults = {
   prefix: basename(process.argv[1]),
