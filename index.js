@@ -6,6 +6,7 @@ var delimited = require('cli-util').delimited;
 var defaults = {
   prefix: basename(process.argv[1]),
   delimiter: '_',
+  initialize: false,
   transform: {
     key: null,
     value: null,
@@ -28,6 +29,12 @@ var Environment = function(conf) {
       value: conf
     }
   );
+  if(conf.initialize) {
+    for(var z in process.env) {
+      //console.log('%s=%s', z, process.env[z]);
+      this.set(z.toLowerCase(), process.env[z] || '');
+    }
+  }
 }
 
 /**
@@ -76,6 +83,7 @@ function getValue (key, property) {
  *  @return A camel case property name.
  */
 function getPropertyName(key) {
+  if(key == '_') return key;
   if(typeof(this.conf.transform.name) == 'function') {
     return this.conf.transform.name.call(this, key);
   }
@@ -108,7 +116,6 @@ function get(key) {
   var value = this.getValue(k);
   return value || process.env[key] || this[this.getPropertyName(key)];
 }
-
 
 /**
  *  Convert the environment variables to a string
@@ -153,7 +160,8 @@ for(var z in methods) {
 }
 
 module.exports = function(conf) {
-  conf = merge(conf, defaults);
+  var c = merge(defaults, {});
+  conf = merge(conf, c);
   var env = new Environment(conf);
   return env;
 }
