@@ -1,6 +1,4 @@
 var basename = require('path').basename;
-var events = require('events');
-var util = require('util');
 var merge = require('cli-util').merge;
 var camelcase = require('cli-util').camelcase;
 
@@ -9,13 +7,16 @@ var defaults = {
   delimiter: '_',
   transform: {
     key: null,
-    value: null
+    value: null,
+    name: null
   }
 }
 
 /**
  *  Helper class for accessing environment variables
  *  using a defined prefix.
+ *
+ *  @param conf The configuration object.
  */
 var Environment = function(conf) {
   Object.defineProperty(this, 'conf',
@@ -28,25 +29,57 @@ var Environment = function(conf) {
   );
 }
 
-util.inherits(Environment, events.EventEmitter);
-
 /**
  *  Retrieve a suitable key for setting an environment
  *  variable.
+ *
+ *  @api private
  *
  *  @param key The candidate key.
  *
  *  @return A converted key.
  */
-Environment.prototype.getKey = function(key) {
+function getKey(key) {
+  if(typeof(this.conf.transform.key) == 'function') {
+    return this.conf.transform.key.call(this, key);
+  }
   key = key.replace(/- /, this.conf.delimiter);
   key = key.replace(/[^a-zA-Z0-9_]/, '');
   return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
 }
 
-Environment.prototype.getValue = function(key) {
-  return process.env[key] || this[key];
+/**
+ *  Retrieve the value of a variable from the environment.
+ *
+ *  @api private
+ *
+ *  @param key The key that has already been passed through
+ *  the key transformation function.
+ *  @param property The name of a property corresponding to the key.
+ *
+ *  @return The value of the environment variable.
+ */
+function getValue (key, property) {
+  if(typeof(this.conf.transform.value) == 'function') {
+    return this.conf.transform.value.call(this, key);
+  }
+  return process.env[key] || this[property];
 }
+
+/**
+ *  Convert a key into a property name.
+ *
+ *  @param key The property key.
+ *
+ *  @return A camel case property name.
+ */
+function getPropertyName(key) {
+  if(typeof(this.conf.transform.name) == 'function') {
+    return this.conf.transform.name.call(this, key);
+  }
+  return camelcase(key, this.conf.delimiter)
+}
+
 
 /**
  *  Set an environment variable using the transform
@@ -55,16 +88,10 @@ Environment.prototype.getValue = function(key) {
  *  @param key The variable key.
  *  @param value The variable value.
  */
-Environment.prototype.set = function(key, value) {
-  var transform = this.conf.transform.key;
-  if(typeof(transform) == 'function') {
-    key = transform.call(this, key);
-  }else{
-    key = this.getKey(key);
-  }
-  var k  = key.replace(
-    new RegExp('^' + this.conf.prefix + this.conf.delimiter), '');
-  this[camelcase(k, this.conf.delimiter)] = process.env[key] = value;
+function set(key, value) {
+  var k = this.getKey(key);
+  var name = this.getPropertyName(key);
+  this[name] = process.env[k] = value;
 }
 
 /**
@@ -75,18 +102,29 @@ Environment.prototype.set = function(key, value) {
  *
  *  @return The variable value.
  */
-Environment.prototype.get = function(key) {
-  var transform = this.conf.transform.key, value;
-  if(typeof(transform) == 'function') {
-    key = transform.call(this, key);
-  }
-  transform = this.conf.transform.value;
-  if(typeof(transform) == 'function') {
-    value = transform.call(this, key);
-  }else{
-    value = this.getValue(key);
-  }
-  return value || process.env[key] || this[key];
+function get(key) {
+  var k = this.getKey(key);
+  var value = this.getValue(k);
+  return value || process.env[key] || this[this.getPropertyName(key)];
+}
+
+var methods = {
+  getKey: getKey,
+  getValue: getValue,
+  getPropertyName: getPropertyName,
+  get: get,
+  set: set
+}
+
+for(var z in methods) {
+  Object.defineProperty(Environment.prototype, z,
+    {
+      enumerable: false,
+      configurable: false,
+      writable: false,
+      value: methods[z]
+    }
+  )
 }
 
 module.exports = function(conf) {

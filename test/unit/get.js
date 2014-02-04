@@ -12,7 +12,7 @@ describe('cli-env:', function() {
     var env = environ({prefix: 'unit'});
     env.set('value', 'string');
     expect(env.value).to.eql('string');
-    console.dir(env);
+    //console.dir(env);
     done();
   });
   it('should get variable on instance (camelcase)', function(done) {

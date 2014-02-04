@@ -1,3 +1,4 @@
+var camelcase = require('cli-util').camelcase;
 var expect = require('chai').expect;
 var environ = require('../..');
 
@@ -13,9 +14,12 @@ describe('cli-env:', function() {
           key = key.replace(/[^a-zA-Z0-9_]/, '');
           return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
         },
-        value: function(key) {
+        value: function(key, property) {
           expect(this).to.equal(env);
-          return process.env[key] || this[key];
+          return process.env[key] || this[property];
+        },
+        name: function(key) {
+          return camelcase(key, this.conf.delimiter)
         }
       }
     }
