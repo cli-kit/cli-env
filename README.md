@@ -138,6 +138,12 @@ Get the value of a variable.
 
 * `key`: The name of the variable.
 
+### load(match)
+
+Load variables from the environment into the instance.
+
+* `match`: A regular expression used to test which variables to import, use this to import a subset of the environment variables.
+
 ### set(key, value)
 
 Set the value of a variable.
