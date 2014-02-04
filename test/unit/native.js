@@ -20,6 +20,8 @@ describe('cli-env:', function() {
     expect(env.num).to.eql(-10);
     env.set('arr', 'a,b,c');
     expect(env.arr).to.eql(['a', 'b', 'c']);
+    env.set('nums', '1,2,3');
+    expect(env.nums).to.eql([1,2,3]);
     env.set('obj', '{"arr":[1,2,3]}');
     expect(env.obj).to.eql({arr: [1,2,3]});
     env.set('str', 'value');
@@ -33,6 +35,7 @@ describe('cli-env:', function() {
     process.env.undef = 'undefined';
     process.env.num = '-10';
     process.env.arr = 'a,b,c';
+    process.env.nums = '1,2,3';
     process.env.obj = '{"arr":[1,2,3]}';
     process.env.str = 'value';
     var env = environ({
@@ -44,6 +47,7 @@ describe('cli-env:', function() {
     expect(env.undef).to.eql(undefined);
     expect(env.num).to.eql(-10);
     expect(env.arr).to.eql(['a', 'b', 'c']);
+    expect(env.nums).to.eql([1, 2, 3]);
     expect(env.obj).to.eql({arr: [1,2,3]});
     expect(env.str).to.eql('value');
     done();
