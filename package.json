@@ -1,6 +1,6 @@
 {
   "name": "cli-env",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Environment variable management",
   "author": "muji <noop@xpm.io>",
   "repository": {
@@ -20,7 +20,7 @@
     "environment"
   ],
   "dependencies": {
-    "cli-util": "~1.0.9"
+    "cli-util": "~1.1.2"
   },
   "devDependencies": {
     "ttycolor": "~0.7.5",

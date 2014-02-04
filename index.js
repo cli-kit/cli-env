@@ -1,7 +1,9 @@
 var basename = require('path').basename;
 var merge = require('cli-util').merge;
-var camelcase = require('cli-util').camelcase;
-var delimited = require('cli-util').delimited;
+var utils = require('cli-util');
+var camelcase = utils.camelcase;
+var delimited = utils.delimited;
+var native = utils.native;
 
 var defaults = {
   prefix: basename(process.argv[1]),
@@ -109,6 +111,12 @@ function getPropertyName(key) {
 function set(key, value) {
   var k = this.getKey(key);
   var name = this.getPropertyName(key);
+  if(this.conf.native && typeof(value) == 'string') {
+    try {
+      value = native.to(
+        value, this.conf.native.delimiter, this.conf.native.json);
+    }catch(e){}
+  }
   this[name] = process.env[k] = value;
 }
 
@@ -123,7 +131,12 @@ function set(key, value) {
 function get(key) {
   var k = this.getKey(key);
   var value = this.getValue(k);
-  return value || process.env[key] || this[this.getPropertyName(key)];
+  value = value || process.env[key] || this[this.getPropertyName(key)];
+  if(this.conf.native && typeof(value) == 'string') {
+    value = native.to(
+      value, this.conf.native.delimiter, this.conf.native.json);
+  }
+  return value;
 }
 
 var methods = {
