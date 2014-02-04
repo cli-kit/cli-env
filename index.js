@@ -96,7 +96,7 @@ function getValue (key, name, raw) {
  *
  *  @return A camel case property name.
  */
-function getPropertyName(key) {
+function getName(key) {
   if(key == '_') return key;
   if(this.conf.transform) {
     if(typeof(this.conf.transform.name) == 'function') {
@@ -118,7 +118,7 @@ function getPropertyName(key) {
  */
 function set(key, value) {
   var k = this.getKey(key);
-  var name = this.getPropertyName(key);
+  var name = this.getName(key);
   if(this.conf.native && typeof(value) == 'string') {
     try {
       value = native.to(
@@ -138,7 +138,7 @@ function set(key, value) {
  */
 function get(key) {
   var k = this.getKey(key);
-  var name = this.getPropertyName(key);
+  var name = this.getName(key);
   var value = this.getValue(k, name, key);
   return value;
 }
@@ -166,7 +166,7 @@ function load(match) {
 var methods = {
   getKey: getKey,
   getValue: getValue,
-  getPropertyName: getPropertyName,
+  getName: getName,
   get: get,
   set: set,
   load: load

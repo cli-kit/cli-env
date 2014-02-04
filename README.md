@@ -132,6 +132,18 @@ Create a new `Environment` instance merging the `conf` parameter with the defaul
 
 ## Environment
 
+The `Environment` class provides access to reading, writing and loading variables from the environment. All internal properties and methods of the class are marked read-only so some variable names will not be set. These include the public methods and properties listed below as well as the private methods `getKey`, `getValue` and `getName`.
+
+### new Environment([conf])
+
+Create a new `Environment` instance with the specified configuration.
+
+* `conf`: The configuration for the environment.
+
+### conf
+
+The object representing the environment configuration.
+
 ### get(key)
 
 Get the value of a variable.
