@@ -10,4 +10,13 @@ describe('cli-env:', function() {
     //console.dir(keys);
     done();
   });
+  it('should initialize from environment with regexp match', function(done) {
+    process.env.UNIT_TEST_ENV = 'production';
+    process.env.UNIT_TEST_UNDEFINED = undefined;
+    var env = environ({prefix: false, initialize: true, match: /^unit_test_/i});
+    expect(env.unitTestEnv).to.eql('production');
+    var keys = Object.keys(env);
+    expect(keys.length).to.eql(2);
+    done();
+  });
 });

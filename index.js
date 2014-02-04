@@ -32,13 +32,12 @@ var Environment = function(conf) {
   );
   if(conf.initialize) {
     for(var z in process.env) {
-      //console.log('%s=%s', z, process.env[z]);
       if(conf.match instanceof RegExp) {
         if(conf.match.test(z)) {
-          this.set(z.toLowerCase(), process.env[z] || '');
+          this.set(z.toLowerCase(), process.env[z]);
         }
       }else{
-        this.set(z.toLowerCase(), process.env[z] || '');
+        this.set(z.toLowerCase(), process.env[z]);
       }
     }
   }
@@ -171,7 +170,8 @@ for(var z in methods) {
 
 module.exports = function(conf) {
   var c = merge(defaults, {});
-  conf = merge(conf, c);
-  var env = new Environment(conf);
+  var env = new Environment(merge(conf, c));
   return env;
 }
+
+module.exports.Environment = Environment;
