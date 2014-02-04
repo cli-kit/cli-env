@@ -8,14 +8,8 @@ var defaults = {
   prefix: basename(process.argv[1]),
   delimiter: '_',
   transform: {
-    key: function(key, conf) {
-      key = key.replace(/- /, conf.delimiter);
-      key = key.replace(/[^a-zA-Z0-9_]/, '');
-      return conf.prefix + conf.delimiter + key.toLowerCase()
-    },
-    get: function(key, conf) {
-      return process.env[key] || this[key];
-    }
+    key: null,
+    value: null
   }
 }
 
@@ -37,6 +31,24 @@ var Environment = function(conf) {
 util.inherits(Environment, events.EventEmitter);
 
 /**
+ *  Retrieve a suitable key for setting an environment
+ *  variable.
+ *
+ *  @param key The candidate key.
+ *
+ *  @return A converted key.
+ */
+Environment.prototype.getKey = function(key) {
+  key = key.replace(/- /, this.conf.delimiter);
+  key = key.replace(/[^a-zA-Z0-9_]/, '');
+  return this.conf.prefix + this.conf.delimiter + key.toLowerCase()
+}
+
+Environment.prototype.getValue = function(key) {
+  return process.env[key] || this[key];
+}
+
+/**
  *  Set an environment variable using the transform
  *  set function.
  *
@@ -46,7 +58,9 @@ util.inherits(Environment, events.EventEmitter);
 Environment.prototype.set = function(key, value) {
   var transform = this.conf.transform.key;
   if(typeof(transform) == 'function') {
-    key = transform.call(this, key, this.conf);
+    key = transform.call(this, key);
+  }else{
+    key = this.getKey(key);
   }
   var k  = key.replace(
     new RegExp('^' + this.conf.prefix + this.conf.delimiter), '');
@@ -64,11 +78,13 @@ Environment.prototype.set = function(key, value) {
 Environment.prototype.get = function(key) {
   var transform = this.conf.transform.key, value;
   if(typeof(transform) == 'function') {
-    key = transform.call(this, key, this.conf);
+    key = transform.call(this, key);
   }
-  transform = this.conf.transform.get;
+  transform = this.conf.transform.value;
   if(typeof(transform) == 'function') {
-    value = transform.call(this, key, this.conf);
+    value = transform.call(this, key);
+  }else{
+    value = this.getValue(key);
   }
   return value || process.env[key] || this[key];
 }

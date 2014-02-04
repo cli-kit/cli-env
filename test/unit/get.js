@@ -15,9 +15,22 @@ describe('cli-env:', function() {
     console.dir(env);
     done();
   });
+  it('should get variable on instance (camelcase)', function(done) {
+    var env = environ({prefix: 'unit'});
+    env.set('highlight_syntax', 'true');
+    expect(env.highlightSyntax).to.eql('true');
+    //var s = JSON.stringify(env);
+    done();
+  });
   it('should get unknown variable', function(done) {
     var env = environ({prefix: 'unit'});
     expect(env.get('NODE_ENV')).to.eql(undefined);
+    done();
+  });
+  it('should get variable from environment', function(done) {
+    process.env.NODE_ENV = 'test';
+    var env = environ({prefix: 'unit'});
+    expect(env.get('NODE_ENV')).to.eql('test');
     done();
   });
 });
