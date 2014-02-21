@@ -106,6 +106,10 @@ function getName(key) {
   if(this.conf.prefix) {
     key = key.replace(this.conf.prefix + '_', '');
   }
+  // guard against silly variables such as npm_config_cache____foo
+  key = key.replace(
+    new RegExp(this.conf.delimiter + '+', 'g'), this.conf.delimiter);
+
   return camelcase(key, this.conf.delimiter)
 }
 

@@ -4,6 +4,7 @@ var environ = require('../..');
 describe('cli-env:', function() {
   it('should initialize from environment', function(done) {
     process.env.NODE_ENV = 'test';
+    process.env.npm_config_cache____foo='bar';
     var env = environ({prefix: false, initialize: true});
     expect(env.nodeEnv).to.eql('test');
     //var keys = Object.keys(env);
