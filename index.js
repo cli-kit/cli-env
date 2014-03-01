@@ -176,35 +176,31 @@ function load(match) {
  *  @param str The target sring value.
  *  @param env An object containing environment variables
  *  default is process.env.
- *  @param escaped Whether escaped dollars indicate replacement
+ *  @param escaping Whether escaped dollars indicate replacement
  *  should be ignored.
  */
-function replace(str, env, escaped) {
+function replace(str, env, escaping) {
   if(!str) return str;
-  var re = /(\\?)\$\{?(\w+)\}?/g;
+  var re = /(\\?)(\$\{?)(\w+)(\}?)/g;
   if(!re.test(str)) return str;
   env = env || process.env;
-  escaped = escaped === undefined ? true : escaped;
-  re.lastIndex = 0;
-  //console.log(str);
-  var result, name, before, suffix, end, value;
-  while(result = re.exec(str)) {
-    //console.dir(result);
-    value = result[0];
-    before = '';
-    name = result[2];
+  escaping = escaping === undefined ? true : escaping;
+  str = str.replace(re, function(
+    match, backslash, prefix, name, suffix, offset, string) {
+    //console.log(name);
+    if(backslash && env[name]) {
+      if(escaping) {
+        return prefix + name + suffix;
+      }
+    }
     if(env[name]) {
-      value = env[name];
-      before = result[1];
+      if(!escaping && backslash) {
+        return backslash + env[name];
+      }
+      return env[name];
     }
-    if(escaped && result[1] === '\\') {
-      value = result[0].substr(1);
-      before = '';
-    }
-    start = str.substr(0, result.index) + before;
-    end = str.substr(result.index + result[0].length);
-    str = start + value + end;
-  }
+    return match;
+  })
   return str;
 }
 
