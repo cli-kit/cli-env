@@ -1,7 +1,7 @@
 var basename = require('path').basename;
-var merge = require('cli-util').merge;
-var native = require('cli-native');
 var utils = require('cli-util');
+var merge = utils.merge, walk = utils.walk;
+var native = require('cli-native');
 var camelcase = utils.camelcase;
 var delimited = utils.delimited;
 
@@ -173,7 +173,7 @@ function load(match) {
  *
  *    $variable or ${variable}
  *
- *  @param str The target sring value.
+ *  @param str The target string value.
  *  @param env An object containing environment variables
  *  default is process.env.
  *  @param escaping Whether escaped dollars indicate replacement
@@ -204,6 +204,24 @@ function replace(str, env, escaping) {
   return str;
 }
 
+/**
+ *  Performs recursive substitution of environment variables within
+ *  complex objects.
+ *
+ *  @param root The root object.
+ *  @param env An object containing environment variables
+ *  default is process.env.
+ *  @param escaping Whether escaped dollars indicate replacement
+ *  should be ignored.
+ */
+function env(root, env, escaping) {
+  walk(root, function visit(props) {
+    return (props.value instanceof String) || typeof props.value === 'string';
+  }, function transform(props) {
+    props.parent[props.name] = replace(props.value, env, escaping);
+  })
+}
+
 var methods = {
   getKey: getKey,
   getValue: getValue,
@@ -232,3 +250,4 @@ module.exports = function(conf) {
 
 module.exports.Environment = Environment;
 module.exports.replace = replace;
+module.exports.env = env;

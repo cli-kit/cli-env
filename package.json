@@ -22,7 +22,7 @@
     "environment"
   ],
   "dependencies": {
-    "cli-util": "~1.1.14",
+    "cli-util": "~1.1.15",
     "cli-native": "~1.0.0"
   },
   "devDependencies": {
