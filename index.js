@@ -178,13 +178,18 @@ function load(match) {
  *  default is process.env.
  *  @param escaping Whether escaped dollars indicate replacement
  *  should be ignored.
+ *  @param convert A conversion function used to convert the value
+ *  to a string value before replacement.
  */
-function replace(str, env, escaping) {
+function replace(str, env, escaping, convert) {
   if(!str) return str;
   var re = /(\\?)(\$\{?)(\w+)(\}?)/g;
   if(!re.test(str)) return str;
   env = env || process.env;
   escaping = escaping === undefined ? true : escaping;
+  if(!convert) {
+    convert = function(value){return value};
+  }
   str = str.replace(re, function(
     match, backslash, prefix, name, suffix, offset, string) {
     //console.log(name);
@@ -193,11 +198,14 @@ function replace(str, env, escaping) {
         return prefix + name + suffix;
       }
     }
+    if(!env[name] && backslash && escaping) {
+      return prefix + name + suffix;
+    }
     if(env[name]) {
       if(!escaping && backslash) {
-        return backslash + env[name];
+        return backslash + convert(env[name]);
       }
-      return env[name];
+      return convert(env[name]);
     }
     return match;
   })
