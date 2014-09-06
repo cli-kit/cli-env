@@ -22,8 +22,8 @@
     "environment"
   ],
   "dependencies": {
-    "cli-util": "~1.1.15",
-    "cli-native": "~1.0.0"
+    "cli-native": "~1.0.0",
+    "cli-util": "^1.1.17"
   },
   "devDependencies": {
     "ttycolor": "~0.7.5",

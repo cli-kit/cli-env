@@ -7,8 +7,6 @@ describe('cli-env:', function() {
     process.env.npm_config_cache____foo='bar';
     var env = environ({prefix: false, initialize: true});
     expect(env.nodeEnv).to.eql('test');
-    //var keys = Object.keys(env);
-    //console.dir(keys);
     done();
   });
   it('should initialize from environment with regexp match', function(done) {

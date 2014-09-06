@@ -15,6 +15,12 @@ var defaults = {
     value: null,
     name: null
   },
+  expand: {
+    delimiter: null,
+    transform: function(key) {
+      return key.toLowerCase();
+    }
+  },
   native: null
 }
 
@@ -165,6 +171,21 @@ function load(match) {
       this.set(z.toLowerCase(), process.env[z]);
     }
   }
+
+  // expand out camel case strings using another delimiter
+  if(this.conf.expand && this.conf.expand.delimiter) {
+    var o = {}, k, v, val;
+    for(k in this) {
+      val = this[k];
+      v = delimited(k, this.conf.expand.delimiter);
+      if(typeof this.conf.expand.transform === 'function') {
+        v = this.conf.expand.transform(v);
+      }
+
+      this.set(v, val);
+      delete this[k];
+    }
+  }
 }
 
 /**
@@ -251,7 +272,7 @@ for(var z in methods) {
 }
 
 module.exports = function(conf) {
-  var c = merge(defaults, {});
+  var c = merge(defaults, {}, {copy: true});
   var env = new Environment(merge(conf, c));
   return env;
 }
