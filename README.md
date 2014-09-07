@@ -100,6 +100,12 @@ console.log(JSON.stringify(env, undefined, 2));
     value: null,
     name: null
   },
+  expand: {
+    delimiter: null,
+    transform: function(key) {
+      return key.toLowerCase();
+    }
+  },
   native: null
 }
 ```
@@ -110,6 +116,9 @@ console.log(JSON.stringify(env, undefined, 2));
 * `match`: A regular expression used to filter the environment variables to import.
 * `transform`: An object containing functions that may be used to override the default logic for determining variable keys, retrieving variable values and getting property names. All functions are invoked in the scope of the `Environment` instance.
 * `native`: If present this object indicates that type conversion should be done from string values to native types.
+* `expand`: An object that controls whether keys are expanded, use this when you wish to convert the default camel case keys to use a different delimiter (such as a period '.').
+* `expand.delimiter`: String delimiter to use when converting from camel case.
+* `expand.transform`: A transform function to invoke when expanding keys, default implementation converts the key to lowercase.
 
 ### transform.key(key)
 
