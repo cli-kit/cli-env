@@ -1,6 +1,6 @@
 {
   "name": "cli-env",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Environment variable management",
   "author": "muji <noop@xpm.io>",
   "repository": {
