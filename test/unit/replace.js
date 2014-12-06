@@ -75,4 +75,12 @@ describe('cli-env:', function() {
     delete process.env.variable;
     done();
   });
+
+  it('should throw error with strict enabled', function(done) {
+    function fn() {
+      environ.replace('my ${non_existent_variable}', {}, true, null, true);
+    }
+    expect(fn).throws(Error);
+    done();
+  });
 });

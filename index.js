@@ -201,8 +201,10 @@ function load(match) {
  *  should be ignored.
  *  @param convert A conversion function used to convert the value
  *  to a string value before replacement.
+ *  @param strict Throw an error if a replacement does not match an
+ *  environment variable.
  */
-function replace(str, env, escaping, convert) {
+function replace(str, env, escaping, convert, strict) {
   if(!str) return str;
   var re = /(\\?)(\$\{?)(\w+)(\}?)/g;
   if(!re.test(str)) return str;
@@ -213,7 +215,6 @@ function replace(str, env, escaping, convert) {
   }
   str = str.replace(re, function(
     match, backslash, prefix, name, suffix, offset, string) {
-    //console.log(name);
     if(backslash && env[name]) {
       if(escaping) {
         return prefix + name + suffix;
@@ -227,6 +228,9 @@ function replace(str, env, escaping, convert) {
         return backslash + convert(env[name]);
       }
       return convert(env[name]);
+    }else if(strict) {
+      throw new Error(
+        'environment variable replace could not locate variable: ' + name)
     }
     return match;
   })
